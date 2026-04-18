@@ -6,7 +6,6 @@ import {
     ChevronDown,
     Menu,
     CalendarCheck,
-    FileText,
     User,
     Users,
     GraduationCap,
