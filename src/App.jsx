@@ -13,6 +13,7 @@ import Teachers from './admin/Teachers';
 import Fees from './admin/Fees';
 import Results from './admin/Results';
 import EventManager from './admin/EventManager';
+import DisclosureManager from './admin/DisclosureManager';
 import EnquiryManager from './admin/EnquiryManager';
 import TCManager from './admin/TCManager';
 
