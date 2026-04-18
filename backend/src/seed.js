@@ -8,7 +8,7 @@ const seedAdmin = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
 
-        const email = 'arunverma7599@gmail.com';
+        const email = ':sjcsjharsuguda@gmail.com';
         const userExists = await User.findOne({ email });
 
         if (userExists) {
@@ -17,16 +17,16 @@ const seedAdmin = async () => {
         }
 
         const adminUser = new User({
-            name: 'Arun Verma',
+            name: 'Joseph School',
             email: email,
-            password: 'admin123',
+            password: 'sjcs@Admin',
             role: 'admin',
         });
 
         await adminUser.save();
         console.log('Admin user created successfully');
-        console.log('Email: arunverma7599@gmail.com');
-        console.log('Password: admin123');
+        console.log('Email:sjcsjharsuguda@gmail.com');
+        console.log('Password: sjcs@Admin');
         process.exit();
     } catch (error) {
         console.error(`Error: ${error.message}`);
