@@ -6,6 +6,7 @@ import {
     ChevronDown,
     Menu,
     CalendarCheck,
+    FileText,
     User,
     Users,
     GraduationCap,
@@ -140,6 +141,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 <NavLink to="/admin/events" className={({ isActive }) => isActive ? activeItemClass : inactiveItemClass}>
                                     <CalendarCheck className="h-5 w-5" />
                                     Public Events
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/admin/disclosures" className={({ isActive }) => isActive ? activeItemClass : inactiveItemClass}>
+                                    <FileText className="h-5 w-5" />
+                                    Mandatory Disclosure
                                 </NavLink>
                             </li>
                         </ul>

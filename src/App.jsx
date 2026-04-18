@@ -36,6 +36,7 @@ function App() {
               <Route path="fees" element={<Fees />} />
               <Route path="results" element={<Results />} />
               <Route path="events" element={<EventManager />} />
+              <Route path="disclosures" element={<DisclosureManager />} />
               <Route path="enquiries" element={<EnquiryManager />} />
               <Route path="tc" element={<TCManager />} />
               <Route path="settings" element={<Settings />} />
