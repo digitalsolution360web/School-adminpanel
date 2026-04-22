@@ -241,7 +241,7 @@ const DisclosureManager = () => {
                                     <td className="px-8 py-6">
                                         {disclosure.src ? (
                                             <a 
-                                                href={`${disclosure.src}#toolbar=0`} 
+                                                href={`https://docs.google.com/viewer?url=${encodeURIComponent(disclosure.src)}`} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
                                                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-[#8B0000] text-[9px] font-bold uppercase tracking-widest border border-rose-100 dark:border-rose-900/50 hover:bg-rose-100 transition-all"
