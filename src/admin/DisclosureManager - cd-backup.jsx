@@ -7,9 +7,7 @@ import {
     Clock,
     X,
     CheckCircle2,
-    Edit,
-    FileText,
-    Upload
+    Edit
 } from 'lucide-react';
 import { useAuth } from '../hooks/AuthContext';
 
@@ -20,9 +18,8 @@ const DisclosureManager = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editDisclosure, setEditDisclosure] = useState(null);
-    const [newDisclosure, setNewDisclosure] = useState({ title: '', src: null });
+    const [newDisclosure, setNewDisclosure] = useState({ title: ''});
     const [deleteId, setDeleteId] = useState(null);
-    const [uploading, setUploading] = useState(false);
     const { user } = useAuth();
     const API_URL = `${API_BASE_URL}/disclosures`;
 
@@ -42,76 +39,38 @@ const DisclosureManager = () => {
         }
     };
 
-    const handleFileChange = (e) => {
-        const src = e.target.files[0];
-        if (src) {
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-            if (allowedTypes.includes(src.type)) {
-                setNewDisclosure({ ...newDisclosure, src });
-            } else {
-                alert('Only JPG, PNG, WebP images or PDF files are allowed');
-            }
-        }
-    };
-
-    const handleEditFileChange = (e) => {
-        const src = e.target.files[0];
-        if (src) {
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-            if (allowedTypes.includes(src.type)) {
-                setEditDisclosure({ ...editDisclosure, src });
-            } else {
-                alert('Only JPG, PNG, WebP images or PDF files are allowed');
-            }
-        }
-    };
-
     const handleCreate = async (e) => {
         e.preventDefault();
-        setUploading(true);
         try {
-            const formData = new FormData();
-            formData.append('title', newDisclosure.title);
-            if (newDisclosure.src) {
-                formData.append('file', newDisclosure.src);
-            }
-
             const res = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`
                 },
-                body: formData
+                body: JSON.stringify(newDisclosure)
             });
             if (res.ok) {
                 const data = await res.json();
                 setDisclosures(prev => [...prev, data]);
                 setIsModalOpen(false);
-                setNewDisclosure({ title: '', src: null });
+                setNewDisclosure({ title: ''});
             }
         } catch (err) {
             console.error("Failed to create disclosure:", err);
-        } finally {
-            setUploading(false);
         }
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        setUploading(true);
         try {
-            const formData = new FormData();
-            formData.append('title', editDisclosure.title);
-            if (editDisclosure.src) {
-                formData.append('file', editDisclosure.src);
-            }
-
             const res = await fetch(`${API_URL}/${editDisclosure.id}`, {
                 method: 'PUT',
                 headers: { 
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`
                 },
-                body: formData
+                body: JSON.stringify(editDisclosure)
             });
             if (res.ok) {
                 const data = await res.json();
@@ -121,8 +80,6 @@ const DisclosureManager = () => {
             }
         } catch (err) {
             console.error("Failed to update Disclosure:", err);
-        } finally {
-            setUploading(false);
         }
     };
 
@@ -155,25 +112,18 @@ const DisclosureManager = () => {
         }
     };
 
-    const openEditModal = (disclosure) => {
-        setEditDisclosure({
-            ...disclosure,
-            src: null
-        });
-        setIsModalOpen(true);
-    };
+    // const openEditModal = (disclosure) => {
+    //     setEditDisclosure({
+    //         ...disclosure,
+    //         date: disclosure.date ? new Date(disclosure.date).toISOString().split('T')[0] : ''
+    //     });
+    //     setIsModalOpen(true);
+    // };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setEditDisclosure(null);
-        setNewDisclosure({ title: '', src: null });
-    };
-
-    const getFileIcon = (src) => {
-        if (src && src.toLowerCase().endsWith('.pdf')) {
-            return <FileText size={16} />;
-        }
-        return null;
+        setNewDisclosure({ title: ''});
     };
 
     return (
@@ -225,7 +175,7 @@ const DisclosureManager = () => {
                         <thead>
                             <tr className="border-b border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
                                 <th className="px-8 py-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Title</th>
-                                <th className="px-8 py-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Document</th>
+                                <th className="px-8 py-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">View</th>
                                 <th className="px-8 py-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
@@ -239,21 +189,9 @@ const DisclosureManager = () => {
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
-                                        {disclosure.src ? (
-                                            <a 
-                                                href={disclosure.src} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-[#8B0000] text-[9px] font-bold uppercase tracking-widest border border-rose-100 dark:border-rose-900/50 hover:bg-rose-100 transition-all"
-                                            >
-                                                {getFileIcon(disclosure.src)}
-                                                View Document
-                                            </a>
-                                        ) : (
-                                            <span className="inline-flex items-center px-4 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-400 text-[9px] font-bold uppercase tracking-widest">
-                                                No Document
-                                            </span>
-                                        )}
+                                        <span className="inline-flex items-center px-4 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-[#8B0000] text-[9px] font-bold uppercase tracking-widest border border-rose-100 dark:border-rose-900/50">
+                                            {disclosure.src}
+                                        </span>
                                     </td>
                                     <td className="px-8 py-6 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
@@ -293,7 +231,7 @@ const DisclosureManager = () => {
                         <div className="bg-slate-50/50 dark:bg-slate-800/50 px-8 py-6 border-b border-slate-100 dark:border-slate-800">
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-4">
                                 <span className="p-3 bg-[#8B0000] rounded-xl text-white shadow-lg"><Plus size={20} /></span>
-                                {editDisclosure ? 'Update Disclosure' : 'Add Disclosure'}
+                                {editDisclosure ? 'Update Disclosure' : 'Disclosure'}
                             </h3>
                         </div>
 
@@ -310,34 +248,26 @@ const DisclosureManager = () => {
                                     required
                                 />
                             </div>
-
-                            {/* Document Upload Area */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Upload Document</label>
-                                <div 
-                                    className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 cursor-pointer hover:border-[#8B0000] transition-colors group"
-                                    onClick={() => document.getElementById('docUpload')?.click()}
-                                >
-                                    <div className="h-14 w-14 rounded-xl bg-white dark:bg-slate-900 border flex items-center justify-center text-slate-300 group-hover:bg-[#8B0000]/10 transition-colors">
-                                        <Upload size={24} className="group-hover:text-[#8B0000]" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#8B0000]">Supporting Document</p>
-                                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">
-                                            {(editDisclosure?.src || newDisclosure?.src) ? 
-                                                (editDisclosure?.src?.name || newDisclosure?.src?.name) : 
-                                                'Click to upload document'
-                                            }
-                                        </p>
-                                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">JPG / PNG / WebP / PDF · Max 5 MB</p>
-                                        <input 
-                                            type="file" 
-                                            accept="image/jpeg,image/png,image/webp,application/pdf" 
-                                            onChange={editDisclosure ? handleEditFileChange : handleFileChange} 
-                                            className="hidden" 
-                                            id="docUpload" 
+                            {/* Photo Mandatory Disclosure Area */}
+                            <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:border-sky-500 transition-colors group"
+                                onClick={() => document.getElementById('mdUpload')?.click()}>
+                                <div className="h-16 w-16 rounded-xl bg-white dark:bg-slate-900 border overflow-hidden flex items-center justify-center text-slate-300">
+                                    {tcPreview ? (
+                                        <img src={tcPreview} className="w-full h-full object-cover" />
+                                    ) : (editTC?.imageFile) ? (
+                                        <img
+                                            src={getImageUrl(editTC.imageFile)}
+                                            className="w-full h-full object-cover"
                                         />
-                                    </div>
+                                    ) : (
+                                        <ImageIcon size={20} />
+                                    )}
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-[8px] font-black uppercase tracking-widest text-sky-600">Student Portrait</p>
+                                    <p className="text-[10px] text-slate-400 font-bold mt-0.5">Click to select photo</p>
+                                    <p className="text-[8px] font-bold text-rose-400 uppercase tracking-widest mt-1">JPG / PNG / WebP · Max 1 MB</p>
+                                    <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} className="hidden" id="mdUpload" />
                                 </div>
                             </div>
 
@@ -346,16 +276,14 @@ const DisclosureManager = () => {
                                     type="button"
                                     onClick={closeModal}
                                     className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold py-4 rounded-xl hover:bg-slate-200 transition-all tracking-widest text-[10px]"
-                                    disabled={uploading}
                                 >
                                     DISCARD
                                 </button>
                                 <button 
                                     type="submit" 
-                                    className="flex-[2] bg-[#8B0000] hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] border-b-4 border-red-950 tracking-widest text-[10px] disabled:opacity-50 disabled:cursor-not-allowed"
-                                    disabled={uploading}
+                                    className="flex-[2] bg-[#8B0000] hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] border-b-4 border-red-950 tracking-widest text-[10px]"
                                 >
-                                    {uploading ? 'UPLOADING...' : (editDisclosure ? 'UPDATE RECORD' : 'SCHEDULE EVENT')}
+                                    {editDisclosure ? 'UPDATE RECORD' : 'SCHEDULE EVENT'}
                                 </button>
                             </div>
                         </form>

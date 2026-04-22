@@ -13,53 +13,64 @@ const getDisclosure = async (req, res) => {
     }
 };
 
-const addGallery = async (req, res) => {
+const addDisclosure = async (req, res) => {
     try {
-        const { alt, category } = req.body;
-        if (!req.file) return res.status(400).json({ message: 'No image provided' });
+        const { title } = req.body;
+        if (!req.file) return res.status(400).json({ message: 'No document provided' });
+        if (!title) return res.status(400).json({ message: 'Title is required' });
 
         const src = getR2Url(req.file.key);
-        const image = await Gallery.create({
-            src,
-            alt: alt || 'School Gallery Image',
-            category: category || 'General',
+        const disclosure = await Disclosure.create({
+            title,
+            src
         });
-        res.status(201).json(image);
+        res.status(201).json(disclosure);
     } catch (error) {
-        console.error('Gallery Upload Error:', error);
+        console.error('Disclosure Upload Error:', error);
         res.status(500).json({ message: 'Server Error during upload', details: error.message });
     }
 };
 
-const updateGallery = async (req, res) => {
+const updateDisclosure = async (req, res) => {
     try {
-        const { alt, category } = req.body;
-        const image = await Gallery.findByPk(req.params.id);
-        if (!image) return res.status(404).json({ message: 'Image not found' });
+        const { title } = req.body;
+        const disclosure = await Disclosure.findByPk(req.params.id);
+        if (!disclosure) return res.status(404).json({ message: 'Disclosure not found' });
 
-        if (alt) image.alt = alt;
-        if (category) image.category = category;
+        if (title) disclosure.title = title;
 
         if (req.file) {
-            image.src = getR2Url(req.file.key);
+            // Delete old file from R2
+            if (disclosure.src && disclosure.src.includes(process.env.CLOUDFLARE_R2_PUBLIC_URL)) {
+                try {
+                    const oldKey = disclosure.src.replace(`${process.env.CLOUDFLARE_R2_PUBLIC_URL}/`, '');
+                    await r2Client.send(new DeleteObjectCommand({
+                        Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
+                        Key: oldKey,
+                    }));
+                } catch (r2Err) {
+                    console.warn('R2 delete warning:', r2Err.message);
+                }
+            }
+            disclosure.src = getR2Url(req.file.key);
         }
 
-        await image.save();
-        res.json(image);
+        await disclosure.save();
+        res.json(disclosure);
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-const deleteGallery = async (req, res) => {
+const deleteDisclosure = async (req, res) => {
     try {
-        const image = await Gallery.findByPk(req.params.id);
-        if (!image) return res.status(404).json({ message: 'Image not found' });
+        const disclosure = await Disclosure.findByPk(req.params.id);
+        if (!disclosure) return res.status(404).json({ message: 'Disclosure not found' });
 
         // Delete from R2
-        if (image.src && image.src.includes(process.env.CLOUDFLARE_R2_PUBLIC_URL)) {
+        if (disclosure.src && disclosure.src.includes(process.env.CLOUDFLARE_R2_PUBLIC_URL)) {
             try {
-                const key = image.src.replace(`${process.env.CLOUDFLARE_R2_PUBLIC_URL}/`, '');
+                const key = disclosure.src.replace(`${process.env.CLOUDFLARE_R2_PUBLIC_URL}/`, '');
                 await r2Client.send(new DeleteObjectCommand({
                     Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
                     Key: key,
@@ -69,11 +80,11 @@ const deleteGallery = async (req, res) => {
             }
         }
 
-        await image.destroy();
-        res.json({ message: 'Image removed' });
+        await disclosure.destroy();
+        res.json({ message: 'Disclosure removed' });
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
-export { getGallery, addGallery, deleteGallery, updateGallery };
+export { getDisclosure, addDisclosure, deleteDisclosure, updateDisclosure };
