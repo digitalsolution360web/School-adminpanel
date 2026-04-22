@@ -194,7 +194,7 @@ const DisclosureManager = () => {
                         <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight uppercase">
                             Mandatory <span className="text-[#8B0000]">Disclosures</span>
                         </h2>
-                        <p className="text-slate-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-2">Scheduled school events and campus logistics</p>
+                        <p className="text-slate-400 font-medium uppercase tracking-[0.2em] text-[10px] mt-2">Mandatory Disclosures</p>
                     </div>
                     
                     <button 
@@ -202,7 +202,7 @@ const DisclosureManager = () => {
                         className="flex items-center justify-center gap-3 bg-[#8B0000] hover:bg-red-950 text-white px-6 py-3.5 rounded-xl font-bold text-[10px] tracking-widest shadow-lg shadow-rose-100 dark:shadow-none transition-all active:scale-95 group border-b-4 border-red-950"
                     >
                         <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-                        SCHEDULE EVENT
+                        Mandatory Disclosures
                     </button>
                 </div>
             </div>
@@ -355,7 +355,7 @@ const DisclosureManager = () => {
                                     className="flex-[2] bg-[#8B0000] hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] border-b-4 border-red-950 tracking-widest text-[10px] disabled:opacity-50 disabled:cursor-not-allowed"
                                     disabled={uploading}
                                 >
-                                    {uploading ? 'UPLOADING...' : (editDisclosure ? 'UPDATE RECORD' : 'SCHEDULE EVENT')}
+                                    {uploading ? 'UPLOADING...' : (editDisclosure ? 'UPDATE RECORD' : 'MANDATORY DISCLOSURES')}
                                 </button>
                             </div>
                         </form>
