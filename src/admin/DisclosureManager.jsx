@@ -212,7 +212,7 @@ const DisclosureManager = () => {
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-5 shadow-sm">
                     <div className="h-12 w-12 rounded-xl bg-[#8B0000]/10 text-[#8B0000] flex items-center justify-center border border-[#8B0000]/10"><Calendar size={24} /></div>
                     <div>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Active Events</p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Mandatory Disclosures</p>
                         <p className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">{disclosures.length}</p>
                     </div>
                 </div>
@@ -244,6 +244,7 @@ const DisclosureManager = () => {
                                                 href={disclosure.src} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
+                                                download={false}
                                                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-[#8B0000] text-[9px] font-bold uppercase tracking-widest border border-rose-100 dark:border-rose-900/50 hover:bg-rose-100 transition-all"
                                             >
                                                 {getFileIcon(disclosure.src)}
