@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import dynamicRoutes from './routes/dynamicRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import disclosureRoutes from './routes/disclosureRoutes.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api', authRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api', dynamicRoutes);
+app.use('/api/disclosures', disclosureRoutes);
 
 app.use((err, req, res, next) => {
     if (err.code === 'LIMIT_FILE_SIZE') {

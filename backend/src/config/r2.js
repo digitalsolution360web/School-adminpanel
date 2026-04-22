@@ -29,13 +29,13 @@ export const uploadToR2 = (folder) => multer({
         },
     }),
     fileFilter: (req, file, cb) => {
-        const allowed = /jpeg|jpg|png|webp/;
+        const allowed = /jpeg|jpg|png|webp|pdf/;
         const ext = allowed.test(path.extname(file.originalname).toLowerCase());
         const mime = allowed.test(file.mimetype);
         if (ext && mime) cb(null, true);
-        else cb(new Error('Only JPG, PNG, or WebP images are allowed'));
+        else cb(new Error('Only JPG, PNG WebP, or Pdf images are allowed'));
     },
-    limits: { fileSize: 1 * 1024 * 1024 },
+    limits: { fileSize: 2 * 1024 * 1024 },
 });
 
 export const getR2Url = (key) => {
